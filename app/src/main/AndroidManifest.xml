@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.shanvi.android.shanvi">
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_shanvi"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_shanvi_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SignalActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <service
+            android:name=".BluetoothLeService"
+            android:enabled="true" />
+
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tools.CircleActivity"
+            android:label="@string/title_activity_circle"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <activity
+            android:name=".tools.MyTriggersActivity"
+            android:label="@string/title_activity_mytriggers"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tools.TriggersActivity"
+            android:label="@string/title_activity_triggers"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tools.LocationActivity"
+            android:label="@string/title_activity_location"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tools.DevicesActivity"
+            android:label="@string/title_activity_devices"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tools.ResponsesActivity"
+            android:label="@string/title_activity_responses"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tools.SalesActivity"
+            android:label="@string/title_activity_sales"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tools.PDevsActivity"
+            android:label="@string/title_activity_pdevs"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tools.MakeDevicesActivity"
+            android:label="@string/title_activity_mdevs"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shanvi.android.shanvi.MainActivity" />
+        </activity>
+
+    </application>
+
+</manifest>
