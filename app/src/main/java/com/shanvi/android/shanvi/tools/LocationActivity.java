@@ -2,6 +2,7 @@ package com.shanvi.android.shanvi.tools;
 
 import android.app.Dialog;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,6 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.shanvi.android.shanvi.R;
 import com.shanvi.android.shanvi.TableAdapter;
 import com.shanvi.android.shanvi.TableRow;
@@ -26,11 +30,33 @@ import java.util.ArrayList;
 public class LocationActivity extends BaseUserActivity {
     private static final String TAG = LocationActivity.class.getSimpleName();
 
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    private Location lastLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Location Activity");
         mLocalTextView.setText(R.string.title_activity_location);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        try {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                lastLocation = location;
+                                Log.d(TAG, location.toString());
+                            }
+                        }
+                    });
+        }
+        catch (SecurityException e) {
+            Log.d(TAG, "Location not available");
+        }
     }
 
     @Override
@@ -108,8 +134,14 @@ public class LocationActivity extends BaseUserActivity {
         txtstatus.setTextColor(Color.parseColor("#22ff22"));
         final EditText editText=(EditText)dialog.findViewById(R.id.txtinput);
         editText.setText("");
+        if (lastLocation != null) {
+            editText.setText("" + lastLocation.getLatitude());
+        }
         final EditText editText2=(EditText)dialog.findViewById(R.id.txtinput2);
         editText2.setText("");
+        if (lastLocation != null) {
+            editText2.setText("" + lastLocation.getLongitude());
+        }
         Button bt=(Button)dialog.findViewById(R.id.btdone);
         Button btc=(Button)dialog.findViewById(R.id.btcancel);
         bt.setText(R.string.add);
