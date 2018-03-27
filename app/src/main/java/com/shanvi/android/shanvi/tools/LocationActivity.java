@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +33,13 @@ public class LocationActivity extends BaseUserActivity {
         mLocalTextView.setText(R.string.title_activity_location);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_devices_toolbar, menu);
+        return true;
+    }
+
     protected void showTable() {
         String userid = uData.userid;
         String url = "http://www.shanvishield.com/safety/safety.php?go=getPersonLocation&pid=" + userid;
@@ -53,12 +61,12 @@ public class LocationActivity extends BaseUserActivity {
                 Toast.makeText(thisActivity, str, Toast.LENGTH_SHORT).show();
             }
             if (type.equals("Add") || type.equals("Remove")) {
-                if (table.length() > 1 || table.getInt(0) == 1) {
+                if (table.length() == 2 && table.getInt(0) == 1) {
                     String str = "Success";
                     Toast.makeText(thisActivity, str, Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    String str = "Error!";
+                    String str = "Error";
                     Toast.makeText(thisActivity, str, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -75,6 +83,14 @@ public class LocationActivity extends BaseUserActivity {
         catch (Exception e) {
             return false;
         }
+    }
+
+    public void onAdd() {
+        TableRow tableRow = null;
+        if (tableRows.size() > 0) {
+            tableRow = tableRows.get(0);
+        }
+        onClick(tableRow, tableAdapter);
     }
 
     public void onClick(TableRow tableRow, TableAdapter tableAdapter) {
@@ -103,9 +119,11 @@ public class LocationActivity extends BaseUserActivity {
                 String lat = editText.getText().toString();
                 String lon = editText2.getText().toString();
                 if (validLocation(lat,lon)) {
-                    tableRow.name = lat;
-                    tableRow.type = lon;
-                    tableAdapter.notifyDataSetChanged();
+                    if (tableRow != null) {
+                        tableRow.name = lat;
+                        tableRow.type = lon;
+                        tableAdapter.notifyDataSetChanged();
+                    }
                     String userid = uData.userid;
                     String url = "http://www.shanvishield.com/safety/safety.php?go=addPersonLocation&pid=" + userid +
                             "&lat=" + lat + "&lon=" + lon;
@@ -132,4 +150,5 @@ public class LocationActivity extends BaseUserActivity {
         Log.d(TAG, "Destroy!");
         super.onDestroy();
     }
+
 }

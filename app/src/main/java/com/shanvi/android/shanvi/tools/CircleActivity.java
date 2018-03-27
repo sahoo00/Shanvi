@@ -89,12 +89,12 @@ public class CircleActivity extends BaseUserActivity implements SearchView.OnQue
                 Toast.makeText(thisActivity, str, Toast.LENGTH_SHORT).show();
             }
             if (type.equals("Add") || type.equals("Remove")) {
-                if (table.length() > 1 || table.getInt(0) == 1) {
+                if (table.length() == 2 && table.getInt(0) == 1) {
                     String str = "Success";
                     Toast.makeText(thisActivity, str, Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    String str = "Error!";
+                    String str = "Error";
                     Toast.makeText(thisActivity, str, Toast.LENGTH_SHORT).show();
                 }
             }

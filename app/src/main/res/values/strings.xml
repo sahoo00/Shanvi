@@ -29,6 +29,11 @@
     <string name="invalid">Invalid Input</string>
     <string name="buy">Buy</string>
     <string name="make">Make Device</string>
+    <string name="users">Users</string>
+    <string name="status">Status</string>
+    <string name="role">Role</string>
+    <string name="set">Set</string>
+    <string name="delete">Delete</string>
 
     <string name="action_about">About</string>
     <string name="action_connect">CONNECT</string>
@@ -65,14 +70,15 @@
     <string name="title_activity_mytriggers">My Triggers</string>
     <string name="search_hint">Name</string>
     <string name="title_inputbox">Input Box</string>
-    <string name="title_activity_base">Base Activity</string>
-    <string name="title_activity_location">Location Activity</string>
-    <string name="title_activity_triggers">Triggers Activity</string>
-    <string name="title_activity_devices">Devices Activity</string>
-    <string name="title_activity_responses">Responses Activity</string>
-    <string name="title_activity_sales">Sales Activity</string>
-    <string name="title_activity_pdevs">Purchased Devices Activity</string>
-    <string name="title_activity_mdevs">Make Devices Activity</string>
+    <string name="title_activity_base">Base</string>
+    <string name="title_activity_location">Location</string>
+    <string name="title_activity_triggers">Triggers</string>
+    <string name="title_activity_devices">Devices</string>
+    <string name="title_activity_responses">Responses</string>
+    <string name="title_activity_sales">Buy Devices</string>
+    <string name="title_activity_pdevs">Purchased Devices</string>
+    <string name="title_activity_mdevs">Make Devices</string>
+    <string name="title_activity_users">Users</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -92,7 +98,10 @@
     <string name="action_reset">Reset</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
+    <string name="error_add_user">Error during adding a user</string>
+    <string name="error_invalid_username">This username is invalid</string>
     <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_nomatch_password">passwords you typed do not match</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."

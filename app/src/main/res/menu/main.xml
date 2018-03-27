@@ -2,8 +2,55 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_users"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/title_activity_users"
+        app:showAsAction="never"
+        android:visible="false"/>
+    <item
+        android:id="@+id/action_mdevs"
+        android:orderInCategory="101"
+        android:title="@string/title_activity_mdevs"
+        app:showAsAction="never"
+        android:visible="false"/>
+    <item
+        android:id="@+id/action_circle"
+        android:orderInCategory="103"
+        android:title="@string/title_activity_circle"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_mytriggers"
+        android:orderInCategory="104"
+        android:title="@string/title_activity_mytriggers"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_location"
+        android:orderInCategory="105"
+        android:title="@string/title_activity_location"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_devices"
+        android:orderInCategory="106"
+        android:title="@string/title_activity_devices"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_responses"
+        android:orderInCategory="107"
+        android:title="@string/title_activity_responses"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_triggers"
+        android:orderInCategory="108"
+        android:title="@string/title_activity_triggers"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_buy"
+        android:orderInCategory="109"
+        android:title="@string/title_activity_sales"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_pdevs"
+        android:orderInCategory="110"
+        android:title="@string/title_activity_pdevs"
         app:showAsAction="never" />
 </menu>

@@ -47,11 +47,14 @@ import com.shanvi.android.shanvi.tools.PDevsActivity;
 import com.shanvi.android.shanvi.tools.ResponsesActivity;
 import com.shanvi.android.shanvi.tools.SalesActivity;
 import com.shanvi.android.shanvi.tools.TriggersActivity;
+import com.shanvi.android.shanvi.tools.UsersActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -76,6 +79,8 @@ public class MainActivity extends AppCompatActivity
     private List<String> myStringArray = new ArrayList<String>();
     private TableAdapter tableAdapter;
     private ArrayList<TableRow> tableRows;
+    private MenuItem mdevs_menu;
+    private MenuItem users_menu;
 
     private boolean loggedIn = false;
     private UserData uData;
@@ -97,6 +102,8 @@ public class MainActivity extends AppCompatActivity
             String lText = uData.username + " logged in";
             mLocalTextView.setText(lText);
         }
+
+        CookieHandler.setDefault(new CookieManager());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -159,21 +166,38 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        mdevs_menu = menu.findItem(R.id.action_mdevs);
+        users_menu = menu.findItem(R.id.action_users);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        Log.d(TAG, "Option Item :" + id);
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_users:
+                manageUsers(null); break;
+            case R.id.action_mdevs:
+                makeDevices(null); break;
+            case R.id.action_pdevs:
+                purchasedDevices(null); break;
+            case R.id.action_circle:
+                safetyCircle(null); break;
+            case R.id.action_mytriggers:
+                myTriggers(null); break;
+            case R.id.action_location:
+                location(null); break;
+            case R.id.action_devices:
+                devices(null); break;
+            case R.id.action_responses:
+                responses(null); break;
+            case R.id.action_triggers:
+                triggersToRespond(null); break;
+            case R.id.action_buy:
+                buyDevices(null); break;
+            default:
+                break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -234,7 +258,7 @@ public class MainActivity extends AppCompatActivity
             if (requestCode == REQUEST_RESPONSE) {
                 String ud = data.getStringExtra(LoginActivity.EXTRA_RESPONSE);
                 uData = UserData.parseUserData(ud);
-                if (uData != null) {
+                if (uData != null && (uData.role.equals("admin") || uData.role.equals("verified"))) {
                     Toast.makeText(this, uData.username, Toast.LENGTH_SHORT).show();
                     String lText = uData.username + " logged in";
                     mLocalTextView.setText(lText);
@@ -242,7 +266,12 @@ public class MainActivity extends AppCompatActivity
                     if (uData.role.equals("admin")) {
                         Button btn = (Button) findViewById(R.id.button11);
                         btn.setVisibility(View.VISIBLE);
+                        mdevs_menu.setVisible(true);
+                        users_menu.setVisible(true);
                     }
+                }
+                else {
+                    uData = null;
                 }
             }
         }
@@ -504,15 +533,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void manageUsers(View v) {
+        if (uData != null) {
+            Intent myIntent = new Intent(this, UsersActivity.class);
+            myIntent.putExtra(UsersActivity.EXTRA_DATA, uData);
+            startActivity(myIntent);
+        }
+    }
+
     public void onDestroy() {
         Log.d(TAG, "Destroy!");
         super.onDestroy();
     }
-
-    public boolean onMenuOpened (int id, Menu m) {
-        Log.d(TAG, "Menu Item");
-        return super.onMenuOpened(id, m);
-    }
-
 
 }
