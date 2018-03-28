@@ -44,7 +44,7 @@ public class InstanceIdService extends FirebaseInstanceIdService {
             DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
 
             dos.writeBytes("token=" + token);
-            dos.writeBytes("&go=storeToken");
+            dos.writeBytes("&go=storeToken&pid=0");
 
             connection.connect();
 

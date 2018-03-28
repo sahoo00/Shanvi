@@ -3,11 +3,14 @@ package com.shanvi.android.shanvi;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.TriggerEvent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -39,6 +42,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.shanvi.android.shanvi.tools.CircleActivity;
 import com.shanvi.android.shanvi.tools.DevicesActivity;
 import com.shanvi.android.shanvi.tools.LocationActivity;
@@ -127,7 +131,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Activity thisActivity = this;
+        createNotificationChannel();
+
         // Make sure we have access coarse location enabled, if not, prompt the user to enable it
         if (ContextCompat.checkSelfPermission(thisActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
@@ -151,8 +156,21 @@ public class MainActivity extends AppCompatActivity
 
         mBluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
 
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "FCM token 1 : " + token);
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            String channelId  = getString(R.string.default_notification_channel_id);
+            String channelName = getString(R.string.default_notification_channel_name);
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW));
+            // [START subscribe_topics]
+            FirebaseMessaging.getInstance().subscribeToTopic("news");
+            // [END subscribe_topics]
+        }
     }
 
     @Override
@@ -256,6 +274,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void saveFCMToken(String pid) {
+        String token = FirebaseInstanceId.getInstance().getToken();
+        if (pid != null && token != null) {
+            String url = "http://www.shanvishield.com/safety/safety.php?go=storeToken&pid=" + pid +
+                    "&token=" + token;
+            Log.d(TAG, url);
+            processRequest(url);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -267,6 +295,7 @@ public class MainActivity extends AppCompatActivity
                     String lText = uData.username + " logged in";
                     mLocalTextView.setText(lText);
                     loggedIn = true;
+                    saveFCMToken(uData.userid);
                     if (uData.role.equals("admin")) {
                         Button btn = (Button) findViewById(R.id.button11);
                         btn.setVisibility(View.VISIBLE);

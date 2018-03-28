@@ -3,4 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="colorTextStroke">#FF4081</color>
+    <color name="colorTextFill">#FF4081</color>
+    <color name="colorC1Stroke">#2037cc</color>
+    <color name="colorC2Stroke">#fcd6e3</color>
+    <color name="colorT1fill">#587ff3</color>
+    <color name="colorT2fill">#23e0ee</color>
+
 </resources>
