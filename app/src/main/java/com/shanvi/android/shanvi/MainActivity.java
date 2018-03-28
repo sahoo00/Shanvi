@@ -38,6 +38,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.shanvi.android.shanvi.tools.CircleActivity;
 import com.shanvi.android.shanvi.tools.DevicesActivity;
 import com.shanvi.android.shanvi.tools.LocationActivity;
@@ -149,6 +150,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         mBluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "FCM token 1 : " + token);
     }
 
     @Override
