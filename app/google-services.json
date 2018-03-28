@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "2386481027",
+    "firebase_url": "https://shanvi-17f9b.firebaseio.com",
+    "project_id": "shanvi-17f9b",
+    "storage_bucket": "shanvi-17f9b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2386481027:android:dd47a8cbbfb37eed",
+        "android_client_info": {
+          "package_name": "com.shanvi.android.shanvi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2386481027-mnk0rlgf4mpjlnen2r3rnihveod5iac8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjArt3d_XgM2n8FcQoFawYM8hU6OaOp1c"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

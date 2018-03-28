@@ -34,6 +34,7 @@
     <string name="role">Role</string>
     <string name="set">Set</string>
     <string name="delete">Delete</string>
+    <string name="settings">Settings</string>
 
     <string name="action_about">About</string>
     <string name="action_connect">CONNECT</string>
@@ -103,9 +104,7 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_nomatch_password">passwords you typed do not match</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="permission_rationale">"permissions are needed"</string>
     <string name="main_test">Test</string>
     <string name="action_save_login">Save Login Information</string>
     <string name="logout_button">Logout</string>
@@ -119,5 +118,9 @@
     <string name="mytriggers_button">MyTRGs</string>
     <string name="location_button">Loc</string>
     <string name="text_user_activity">User Activity</string>
+
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core
+        functionality.</string>
+
 
 </resources>
