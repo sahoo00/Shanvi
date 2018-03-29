@@ -8,10 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.DeadObjectException;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -55,6 +58,10 @@ public class MessageReceiver extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
+            final String title = remoteMessage.getData().get("title");
+            final String body = remoteMessage.getData().get("body");
+            showNotifications(title, body);
+
             if (/* Check if data needs to be processed by long running job */ true) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
                 scheduleJob();
@@ -67,8 +74,8 @@ public class MessageReceiver extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            String title = remoteMessage.getNotification().getTitle();
-            String body = remoteMessage.getNotification().getBody();
+            final String title = remoteMessage.getNotification().getTitle();
+            final String body = remoteMessage.getNotification().getBody();
             Log.d(TAG, "FCM Notification Title: " + title + " Body: " + body);
             showNotifications(title, body);
         }
@@ -110,24 +117,25 @@ public class MessageReceiver extends FirebaseMessagingService {
         String channelId = getString(R.string.default_notification_channel_id);
         String channelDescription = "Default Channel";
 
-        // Create an explicit intent for an Activity in your app
         Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.ic_shanvi_notification)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentTitle(title)
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setVibrate(new long[] { 100, 200, 300, 400, 500})
-                .setLights(Color.RED, 1000, 1000)
-                .setContentIntent(pendingIntent);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.ic_shanvi_notification)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .setContentTitle(title)
+                        .setContentText(messageBody)
+                        .setSound(defaultSoundUri, AudioManager.STREAM_NOTIFICATION)
+                        .setAutoCancel(true)
+                        .setColor(Color.RED)
+                        .setVibrate(new long[] { 100, 200, 300, 400, 500})
+                        .setLights(Color.RED, 1000, 1000)
+                        .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -143,17 +151,15 @@ public class MessageReceiver extends FirebaseMessagingService {
             channel.setLightColor(Color.RED);
             channel.enableVibration(true);
             channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500});
-            channel.setSound(defaultSoundUri, new AudioAttributes.Builder()
+            AudioAttributes att = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build());
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build();
+            channel.setSound(defaultSoundUri, att);
             notificationManager.createNotificationChannel(channel);
         }
 
         Notification notification = notificationBuilder.build();
-        notification.defaults |= Notification.DEFAULT_VIBRATE;
-        notification.defaults |= Notification.DEFAULT_SOUND;
-
         notificationManager.notify(0 /* ID of notification */, notification);
     }
 }
