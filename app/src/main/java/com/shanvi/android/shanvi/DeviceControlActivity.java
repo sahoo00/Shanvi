@@ -48,7 +48,7 @@ public abstract class DeviceControlActivity extends AppCompatActivity {
     private String mDeviceAddress;
 
     // Code to manage Service lifecycle.
-    private ServiceConnection mServiceConnection;
+    private ServiceConnection mServiceConnection = null;
 
     private void createServiceConnection() {
         mServiceConnection = new ServiceConnection() {
@@ -78,9 +78,9 @@ public abstract class DeviceControlActivity extends AppCompatActivity {
     public void disconnect() {
         if (mBluetoothLeService != null)
             mBluetoothLeService.disconnect();
+        mBluetoothLeService = null;
         if (mServiceConnection != null)
             unbindService(mServiceConnection);
-        mBluetoothLeService = null;
         mServiceConnection = null;
     }
 

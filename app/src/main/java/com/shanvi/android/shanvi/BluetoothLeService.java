@@ -69,6 +69,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             String intentAction;
+            Log.d(TAG, "onConnectionStateChange - " + status + " " + newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
@@ -224,6 +225,7 @@ public class BluetoothLeService extends Service {
      * callback.
      */
     public void disconnect() {
+        Log.d(TAG, "disconnect");
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
@@ -236,11 +238,29 @@ public class BluetoothLeService extends Service {
      * released properly.
      */
     public void close() {
+        Log.d(TAG, "close");
         if (mBluetoothGatt == null) {
             return;
         }
+        if (mConnectionState != STATE_DISCONNECTED) {
+            disconnect();
+            String intentAction = ACTION_GATT_DISCONNECTED;
+            mConnectionState = STATE_DISCONNECTED;
+            Log.i(TAG, "Disconnected from GATT server.");
+            broadcastUpdate(intentAction);
+        }
         mBluetoothGatt.close();
         mBluetoothGatt = null;
+    }
+
+    public void writeCharacteristic(BluetoothGattCharacteristic characteristic, byte[] data) {
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+        characteristic.setValue(data);
+        boolean result = mBluetoothGatt.writeCharacteristic(characteristic);
+        Log.w(TAG, "writeCharacteristic result : " + result);
     }
 
     /**

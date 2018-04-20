@@ -106,7 +106,21 @@ public class TableRow {
     }
 
     public static TableRow parseLocation(JSONArray array) {
-        return parseDevices(array);
+        if (array.length() < 3) {
+            return null;
+        }
+        try {
+            TableRow res = new TableRow();
+            res.name = array.getString(0);
+            res.type = array.getString(1);
+            res.username = res.name;
+            res.tid = res.type;
+            res.feature = "";
+            res.number = array.getString(2);
+            return res;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static TableRow parseDevices(JSONArray array) {

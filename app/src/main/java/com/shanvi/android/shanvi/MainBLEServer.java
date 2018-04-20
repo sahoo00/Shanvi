@@ -25,9 +25,18 @@ import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * Created by Debashis on 1/27/2018.
@@ -271,6 +280,45 @@ public class MainBLEServer {
             }
         }
 
+        class GPSData {
+            public byte type;
+            public long deviceid;
+            public float lat;
+            public float lon;
+            public float alt;
+
+            public GPSData(byte[] data) {
+                ByteBuffer bb = ByteBuffer.wrap(data);
+                bb.order(ByteOrder.LITTLE_ENDIAN);
+                type = bb.get();
+                deviceid = bb.getLong();
+                byte gps_data_type = bb.get(20);
+                byte hh = bb.get(21);
+                byte mm = bb.get(22);
+                byte ssv = bb.get(23);
+                byte ssd = bb.get(24);
+                short lat_degree = bb.getShort(28);
+                byte lat_min_v = bb.get(30);
+                int lat_min_d = bb.getInt(32);
+                char ns = (char)bb.get(36);
+                short lon_degree = bb.getShort(40);
+                byte lon_min_v = bb.get(42);
+                int lon_min_d = bb.getInt(44);
+                char ew = (char)bb.get(48);
+                char quality = (char)bb.get(49);
+                byte numSV = bb.get(50);
+                float HDOP = bb.getFloat(52);
+                alt = bb.getFloat(56);
+                char uAlt = (char)bb.get(60);
+                float sep = bb.getFloat(64);
+                char uSep = (char)bb.get(68);
+                lat = lat_degree + lat_min_v/60.0f + lat_min_d/100000.0f/60.0f;
+                lon = lon_degree + lon_min_v/60.0f + lon_min_d/100000.0f/60.0f;
+                if (ns == 'S') { lat = lat * -1; }
+                if (ew == 'W') { lon = lon * -1; }
+            }
+        }
+
         @Override
         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
                                                  BluetoothGattCharacteristic characteristic, boolean preparedWrite,
@@ -279,8 +327,96 @@ public class MainBLEServer {
             if (SafetyProfile.SAFETY_ALERT.equals(characteristic.getUuid())) {
                 Log.i(TAG, "Write Safety Alert");
                 if (value.length > 0) {
+
+                    final StringBuilder stringBuilder = new StringBuilder(value.length);
+                    for (byte byteChar : value)
+                        stringBuilder.append(String.format("%02X ", byteChar));
+                    Log.d(TAG, "Data : " + stringBuilder.toString());
+                    String token = FirebaseInstanceId.getInstance().getToken();
+                    String hop = String.format("%02X ", (byte) token.charAt(0));
                     alert = value[0];
                     Log.i(TAG, "Value:" + value[0] + " Length:" + value.length);
+                    if (value[0] == 0 && value.length >= 17) {
+                        ByteBuffer bb = ByteBuffer.wrap(value);
+                        bb.order(ByteOrder.LITTLE_ENDIAN);
+                        byte action = bb.get();
+                        long deviceid = bb.getLong();
+                        long deviceid2 = bb.getLong();
+                        int ckey = 0;
+                        String rinfo = "01" + hop;
+                        if (value.length >= 32) {
+                            ckey = bb.getInt();
+                            short skip1 = bb.getShort();
+                            short skip2 = bb.getShort();
+                            byte[] bytes = new byte[bb.remaining()];
+                            bb.get(bytes);
+                            final StringBuilder sb = new StringBuilder(bytes.length);
+                            for (byte byteChar : bytes)
+                                sb.append(String.format("%02X", byteChar));
+                            rinfo = sb.toString();
+                        }
+                        String url = "http://www.shanvishield.com/safety/safety.php?go=dTrigger&did=" + deviceid +
+                                "&ckey=" + ckey + "&rinfo=" + rinfo;
+                        Log.d(TAG, url);
+                        MySingleton.processRequest(context, url);
+                    }
+                    if (value[0] == 1 && value.length >= 17) {
+                        ByteBuffer bb = ByteBuffer.wrap(value);
+                        bb.order(ByteOrder.LITTLE_ENDIAN);
+                        byte action = bb.get();
+                        long deviceid = bb.getLong();
+                        long deviceid2 = bb.getLong();
+                        int ckey = 0;
+                        String rinfo = "01" + hop;
+                        if (value.length >= 32) {
+                            ckey = bb.getInt();
+                            short skip1 = bb.getShort();
+                            short skip2 = bb.getShort();
+                            byte[] bytes = new byte[bb.remaining()];
+                            bb.get(bytes);
+                            final StringBuilder sb = new StringBuilder(bytes.length);
+                            for (byte byteChar : bytes)
+                                sb.append(String.format("%02X", byteChar));
+                            rinfo = sb.toString();
+                        }
+                        String url = "http://www.shanvishield.com/safety/safety.php?go=cTrigger&did=" + deviceid +
+                                "&ckey=" + ckey + "&rinfo=" + rinfo;
+                        Log.d(TAG, url);
+                        MySingleton.processRequest(context, url);
+                    }
+                    if (value[0] == 2 && value.length >= 40) {
+                        ByteBuffer bb = ByteBuffer.wrap(value);
+                        bb.order(ByteOrder.LITTLE_ENDIAN);
+                        byte action = bb.get();
+                        long deviceid = bb.getLong();
+                        long deviceid2 = bb.getLong();
+                        short skip1 = bb.getShort();
+                        byte skip2 = bb.get();
+                        float lat = bb.getFloat();
+                        float lon = bb.getFloat();
+                        float alt = bb.getFloat();
+                        byte skip = bb.get();
+                        String rinfo = "";
+                        byte[] bytes = new byte[bb.remaining()];
+                        bb.get(bytes);
+                        final StringBuilder sb = new StringBuilder(bytes.length);
+                        for (byte byteChar : bytes)
+                            sb.append(String.format("%02X", byteChar));
+                        rinfo = sb.toString();
+                        if (value.length >= 72) {
+                            GPSData gd = new GPSData(value);
+                            action = gd.type;
+                            deviceid = gd.deviceid;
+                            lat = gd.lat;
+                            lon = gd.lon;
+                            alt = gd.alt;
+                            rinfo = "01" + hop;
+                        }
+                        String url = "http://www.shanvishield.com/safety/safety.php?go=addDeviceLocation&did=" + deviceid +
+                                "&lat="+ lat + "&lon=" + lon + "&alt=" + alt + "&rinfo=" + rinfo;
+                        Log.d(TAG, url);
+                        MySingleton.processRequest(context, url);
+                    }
                 }
                 if (responseNeeded) {
                     mBluetoothGattServer.sendResponse(device,

@@ -151,13 +151,16 @@ public class LocationActivity extends BaseUserActivity {
     public void onClick(TableRow tableRow, TableAdapter tableAdapter) {
         final Dialog dialog=new Dialog(LocationActivity.this);
         dialog.setTitle(R.string.location);
-        dialog.setContentView(R.layout.input_box_two);
+        dialog.setContentView(R.layout.input_box_three);
         TextView txtMessage=(TextView)dialog.findViewById(R.id.txtmessage);
         txtMessage.setText(R.string.lat);
         txtMessage.setTextColor(Color.parseColor("#ff2222"));
         TextView txtMessage2=(TextView)dialog.findViewById(R.id.txtmessage2);
         txtMessage2.setText(R.string.lon);
         txtMessage2.setTextColor(Color.parseColor("#ff2222"));
+        TextView txtMessage3=(TextView)dialog.findViewById(R.id.txtmessage3);
+        txtMessage3.setText(R.string.altitude);
+        txtMessage3.setTextColor(Color.parseColor("#ff2222"));
         TextView txtstatus=(TextView)dialog.findViewById(R.id.txtstatus);
         txtstatus.setText(R.string.valid);
         txtstatus.setTextColor(Color.parseColor("#22ff22"));
@@ -171,6 +174,11 @@ public class LocationActivity extends BaseUserActivity {
         if (mCurrentLocation != null) {
             editText2.setText("" + mCurrentLocation.getLongitude());
         }
+        final EditText editText3=(EditText)dialog.findViewById(R.id.txtinput3);
+        editText3.setText("");
+        if (mCurrentLocation != null) {
+            editText3.setText("" + mCurrentLocation.getAltitude());
+        }
         Button bt=(Button)dialog.findViewById(R.id.btdone);
         Button btc=(Button)dialog.findViewById(R.id.btcancel);
         bt.setText(R.string.add);
@@ -179,15 +187,17 @@ public class LocationActivity extends BaseUserActivity {
             public void onClick(View v) {
                 String lat = editText.getText().toString();
                 String lon = editText2.getText().toString();
+                String altitude = editText3.getText().toString();
                 if (validLocation(lat,lon)) {
                     if (tableRow != null) {
                         tableRow.name = lat;
                         tableRow.type = lon;
+                        tableRow.number = altitude;
                         tableAdapter.notifyDataSetChanged();
                     }
                     String userid = uData.userid;
                     String url = "http://www.shanvishield.com/safety/safety.php?go=addPersonLocation&pid=" + userid +
-                            "&lat=" + lat + "&lon=" + lon;
+                            "&lat=" + lat + "&lon=" + lon + "&alt=" + altitude;
                     processTableRequest(url, "Add");
                     dialog.dismiss();
                 }

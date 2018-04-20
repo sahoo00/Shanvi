@@ -22,6 +22,7 @@
     <string name="devices">Devices</string>
     <string name="lat">Latitude</string>
     <string name="lon">Longitude</string>
+    <string name="altitude">Altitude</string>
     <string name="dtype">Device Type</string>
     <string name="ckey">Confirmation Key</string>
     <string name="did">Device ID</string>
@@ -80,6 +81,7 @@
     <string name="title_activity_pdevs">Purchased Devices</string>
     <string name="title_activity_mdevs">Make Devices</string>
     <string name="title_activity_users">Users</string>
+    <string name="title_activity_bletrigger">BLE Trigger</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

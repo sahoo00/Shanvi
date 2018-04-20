@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -23,8 +24,12 @@ import java.sql.Time;
  * This class uses external library AChartEngine to show dynamic real time line graph for HR values
  */
 public class LineGraphView {
+
+    private static final String TAG = LineGraphView.class.getSimpleName();
+
     //TimeSeries will hold the data in x,y format for single chart
     private TimeSeries mSeries = new TimeSeries("Breathing pattern");
+    private TimeSeries mScores = new TimeSeries("Score");
     //XYMultipleSeriesDataset will contain all the TimeSeries
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     //XYMultipleSeriesRenderer will contain all XYSeriesRenderer and it can be used to set the properties of whole Graph
@@ -40,6 +45,7 @@ public class LineGraphView {
     public static synchronized LineGraphView getLineGraphView() {
         if (mInstance == null) {
             mInstance = new LineGraphView();
+            Log.d(TAG, "New LineGraphView");
         }
         return mInstance;
     }
@@ -50,6 +56,7 @@ public class LineGraphView {
     public LineGraphView() {
         //add single line chart mSeries
         mDataset.addSeries(mSeries);
+        mDataset.addSeries(mScores);
 
         //XYSeriesRenderer is used to set the properties like chart color, style of each point, etc. of single chart
         final XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
@@ -83,6 +90,17 @@ public class LineGraphView {
         renderer.setYTitle("            Signal");
 
         renderer.addSeriesRenderer(seriesRenderer);
+
+        //XYSeriesRenderer is used to set the properties like chart color, style of each point, etc. of single chart
+        final XYSeriesRenderer seriesRenderer2 = new XYSeriesRenderer();
+        //set line chart color to Black
+        seriesRenderer2.setColor(Color.RED);
+        //set line chart style to square points
+        seriesRenderer2.setPointStyle(PointStyle.SQUARE);
+        seriesRenderer2.setFillPoints(true);
+
+        renderer.addSeriesRenderer(seriesRenderer2);
+        Log.d(TAG, "Create LineGraphView");
     }
 
     /**
@@ -90,16 +108,20 @@ public class LineGraphView {
      */
     public GraphicalView getView(Context context) {
         final GraphicalView graphView = ChartFactory.getLineChartView(context, mDataset, mMultiRenderer);
+        Log.d(TAG, "getView" + graphView.toString());
         return graphView;
     }
 
     /**
      * add new x,y value to chart
      */
-    public void addValue(Point p) {
+    public void addValue(Point p, Point s) {
         mSeries.add(p.x, p.y);
-        if (mPointsCount > MAX_POINTS)
+        mScores.add(s.x, s.y);
+        if (mPointsCount > MAX_POINTS) {
             mSeries.remove(0);
+            mScores.remove(0);
+        }
         mPointsCount++;
     }
 
@@ -108,6 +130,7 @@ public class LineGraphView {
      */
     public void clearGraph() {
         mSeries.clear();
+        mScores.clear();
     }
 
 }

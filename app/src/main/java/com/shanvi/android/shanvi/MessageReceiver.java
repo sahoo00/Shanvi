@@ -144,11 +144,12 @@ public class MessageReceiver extends FirebaseMessagingService {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
             CharSequence name = getString(R.string.default_notification_channel_name);
-            int importance = NotificationManagerCompat.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(channelId, name, importance);
             channel.setDescription(channelDescription);
             channel.enableLights(true);
             channel.setLightColor(Color.RED);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             channel.enableVibration(true);
             channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500});
             AudioAttributes att = new AudioAttributes.Builder()
@@ -160,6 +161,10 @@ public class MessageReceiver extends FirebaseMessagingService {
         }
 
         Notification notification = notificationBuilder.build();
+        notification.ledARGB = Color.RED;
+        notification.ledOnMS = 1000;
+        notification.ledOffMS = 1000;
+        notification.flags |= Notification.FLAG_SHOW_LIGHTS;
         notificationManager.notify(0 /* ID of notification */, notification);
     }
 }

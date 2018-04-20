@@ -46,6 +46,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.shanvi.android.shanvi.tools.BLETriggerActivity;
 import com.shanvi.android.shanvi.tools.CircleActivity;
 import com.shanvi.android.shanvi.tools.DevicesActivity;
 import com.shanvi.android.shanvi.tools.LocationActivity;
@@ -244,9 +245,6 @@ public class MainActivity extends AppCompatActivity
 
         switch(id) {
             case R.id.nav_client:
-                if (bleClient == null) {
-                    bleClient = new MainBLEClient(this, mBluetoothManager);
-                }
                 break;
             case R.id.nav_server:
                 if (bleServer == null) {
@@ -254,18 +252,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.nav_manage:
-                if (bleServer != null) {
-                    bleServer.changeAlert();
-                }
                 break;
             case R.id.nav_clear:
                 if (bleServer != null) {
                     bleServer.clear();
                     bleServer = null;
-                }
-                if (bleClient != null) {
-                    bleClient.clear();
-                    bleClient = null;
                 }
                 break;
             case R.id.nav_signal: {
@@ -277,6 +268,11 @@ public class MainActivity extends AppCompatActivity
                 Intent myIntent = new Intent(MainActivity.this,
                         LoginActivity.class);
                 startActivityForResult(myIntent, REQUEST_RESPONSE);
+            } break;
+            case R.id.nav_trigger: {
+                Intent myIntent = new Intent(MainActivity.this,
+                        BLETriggerActivity.class);
+                startActivity(myIntent);
             } break;
             default:
                 break;
@@ -589,6 +585,10 @@ public class MainActivity extends AppCompatActivity
 
     public void onDestroy() {
         Log.d(TAG, "Destroy!");
+        if (bleServer != null) {
+            bleServer.clear();
+            bleServer = null;
+        }
         super.onDestroy();
     }
 

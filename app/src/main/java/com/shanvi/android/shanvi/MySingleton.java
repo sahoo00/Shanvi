@@ -2,12 +2,19 @@ package com.shanvi.android.shanvi;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -19,6 +26,7 @@ import java.util.Random;
  */
 
 public class MySingleton {
+    private static final String TAG = MySingleton.class.getSimpleName();
 
     private static final String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
 
@@ -102,5 +110,44 @@ public class MySingleton {
             sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
         return sb.toString();
     }
+
+    public static void processRequest(Context ctx, String url) {
+        RequestQueue queue = Volley.newRequestQueue(ctx);
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+                    @Override
+                    public void onResponse(JSONArray table) {
+                        Log.d(TAG, table.toString());
+                        String str = "Error!";
+                        try {
+                            if (table.length() > 1) {
+                                if (table.length() == 2 && table.getInt(0) == 1) {
+                                    str = "Success";
+                                    Toast.makeText(ctx, str, Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    str = "Error";
+                                    Toast.makeText(ctx, str, Toast.LENGTH_SHORT).show();
+                                }
+                                return;
+                            }
+                        } catch(Exception e) {
+                        }
+                        Toast.makeText(ctx, str, Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String str = "Error!";
+                        Toast.makeText(ctx, str, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Access the RequestQueue through your singleton class.
+        MySingleton.getInstance(ctx).addToRequestQueue(jsonObjectRequest);
+    }
+
 
 }

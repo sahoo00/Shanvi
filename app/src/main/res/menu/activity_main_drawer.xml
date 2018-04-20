@@ -28,6 +28,10 @@
             android:id="@+id/nav_signal"
             android:icon="@drawable/ic_signal"
             android:title="Signal" />
+        <item
+            android:id="@+id/nav_trigger"
+            android:icon="@drawable/ic_trigger"
+            android:title="Trigger" />
     </group>
 
 
